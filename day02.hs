@@ -27,4 +27,15 @@ parseDirections inputs = (forward, down, up)
           up = [read(words(x) !! 1) | x <- inputs, head (words x) == "up"]
 
 partTwo :: [String] -> Int
-partTwo inputs = 0
+partTwo inputs = pos * depth
+    where (pos, depth) = moveSubmarine inputs 0 0 0
+
+
+moveSubmarine :: [String] -> Int -> Int -> Int -> (Int, Int)
+moveSubmarine [] aim pos depth = (pos, depth)
+moveSubmarine (x:xs) aim pos depth | head split == "forward" = moveSubmarine xs aim (pos + amount) (depth + (amount * aim))
+                                   | head split == "down" = moveSubmarine xs (aim + amount) pos depth
+                                   | head split == "up" = moveSubmarine xs (aim - amount) pos depth
+                                   | otherwise = error "Something fishy with the input list."
+    where split = words x
+          amount = read (split !! 1)
